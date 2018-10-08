@@ -1,0 +1,17 @@
+ #!/bin/bash
+javac -cp ./src -d ./bin ./src/$1.java
+if [ "$?" -eq "0" ]
+then
+	echo "<-----------compiled, running:------------>"
+	java -cp ./bin $1;
+	if [ "$?" -eq "0" ]
+	then
+		echo "<------------------ran-------------------->"
+		zip -r src.zip src
+		echo "<-----------------zipped.----------------->"
+	else
+		echo "<-------------failed to run.-------------->"
+	fi
+else
+	echo "<-----------failed to compile.------------>"
+fi
