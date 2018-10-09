@@ -1,0 +1,38 @@
+Assembly
+	You try to shoot yourself in the foot only to discover that you must first invent the gun, the bullet, the trigger, and your foot.
+
+C{
+	You shoot yourself in the foot.
+	-----------------------------------------------------------------------------
+	You set the parameters for foot and trigger but forget to use the correct dereferencing parameter for your foot but it still compiles because c does have legere type safety. You end up shooting every foot in existence because the foot you were accidentaly pointing at wasn't \0 terminated
+}
+
+C++
+	You accidentally create a dozen clones of yourself and shoot them all in the foot. Emergency medical assistance is impossible 
+	since yourself can't tell which are bitwise copies and which are just pointing at others and saying, "That's me, over there."
+
+Java{
+	After importing java.awt.right.foot.* and java.awt.gun.right.hand.*, and writing the classes and methods of those classes needed, you've forgotten what the hell you're doing.
+	--------------------------------------------
+	You find that Microsoft and Sun have released imcompatible class libraries both implementing Gun objects. You then find that although there are plenty of feet objects implemented in the past in many other languages, you cannot get access to one. But seeing as Java is so cool, you dont care and go around shooting anything else you can find.
+	-------------------------------------------------------------------------------------------
+	You locate the Gun class, but discover that the Bullet class is abstract, so you extend it and write the missing part of the implementation. Then you implement the ShootAble interface for your foot, and recompile the Foot class. The interface lets the bullet call the doDamage method on the Foot , so the Foot can damage itself in the most effective way. Now you run the program, and call the doShoot method on the instance of the Gun class. First the Gun creates an instance of Bullet , which calls the doFire method on the Gun . The Gun calls the hit(Bullet) method on the Foot , and the instance of Bullet is passed to the Foot . But this causes an IllegalHitByBullet exception to be thrown, and you die.
+}
+
+Python{
+	You try to shoot yourself in the foot but you just keep hitting the whitespace between your toes.
+	-------------------------------------------------------------------------------------------------
+	Python: You try to import gun but it's a new feature in Python 3 and your workplace still uses Python 2.7 with no plans to migrate.
+}
+
+UNIX
+	% ls
+	foot.c foot.h foot.o toe.c toe.o
+	% rm * .o
+	rm: .o: No such file or directory
+	% ls
+	%
+
+Binary
+	Before you can shoot yourself in the foot you must disassemble the gun at the atomic level and then reassemble it. After you do this, you find that the bullets require a special operator so the gun doesn't work.
+

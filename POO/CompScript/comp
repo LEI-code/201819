@@ -10,7 +10,7 @@ then
 		zip -r src.zip src
 		echo "<-----------------zipped.----------------->"
 	else
-		echo "<-------------failed to run.-------------->"
+		echo "<-------------failed to run.--------------> $?" 
 	fi
 else
 	echo "<-----------failed to compile.------------>"
