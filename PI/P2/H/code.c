@@ -1,22 +1,19 @@
 #include <stdio.h>
+#include <math.h>
 
-double sqr(double val){
-	return val*val;
-}
-
-double sum_inverse_squares(unsigned n){
+double sum_powers_from(double x, double y, int n){
 	double res = 0;
-	while(res += 1./sqr(n), --n);
+	while(n>0)res += pow(x+((double)(--n)), y);
 	return res;
 }
 
-double sum_inverse_squares_recursive(unsigned n){
-	return n>0 ? 1./sqr(n) + sum_inverse_squares_recursive(n-1) : 0;
+double sum_inverse_squares(int n){
+	return sum_powers_from(1, -2, n);
 }
 
 int main(int argc, char const *argv[]){
-	unsigned val = 0;
-	while(scanf("%u", &val) != EOF)
+	int val = 0;
+	while(scanf("%i", &val) != EOF)
 		printf("%f\n", sum_inverse_squares(val));
 	return 0;
 }

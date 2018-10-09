@@ -16,7 +16,7 @@ double sum_squares_from_recursive(double x, double n){
 
 int main(int argc, char const *argv[]){
 	double x = 0, n = 0;
-	scanf("%lf %lf", &x, &n);
-	printf("%f\n", sum_squares_from_recursive(x, n));
+	while(scanf("%lf %lf", &x, &n) != EOF)
+		printf("%f\n", sum_squares_from_recursive(x, n));
 	return 0;
 }

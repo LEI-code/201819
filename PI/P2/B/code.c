@@ -1,18 +1,25 @@
 #include <stdio.h>
 
-unsigned sum_multiples(unsigned num, unsigned multiplier){
-	unsigned res = 0; 
-	while(res += (multiplier--) * num, multiplier);
+int sum_positive_integers(int n){
+	int res = 0;
+	while(n>0){res += --n;}
 	return res;
 }
 
-unsigned sum_multiples_recursive(unsigned num, unsigned multiplier){
-	return num ? num*multiplier + sum_positive_integers_recursive(num-1, multiplier) : 0;
+int sum_multiples(int num, int multiplier){
+	return sum_positive_integers(multiplier)*num;
+	/*int res = 0; 
+	while(res += (multiplier--) * num, multiplier>=0);
+	return res;*/
 }
 
+/*int sum_multiples_recursive(int num, int multiplier){
+	return multiplier>=0 ? num*multiplier + sum_multiples_recursive(num, multiplier-1) : 0;
+}*/
+
 int main(int argc, char const *argv[]){
-	unsigned val = 0, mult = 0;
-	while(scanf("%u %u", &val, &mult) != EOF)
-		printf("%u\n", sum_multiples(val, mult));
+	int val = 0, mult = 0;
+	while(scanf("%i %i", &val, &mult) != EOF)
+		printf("%i\n", sum_multiples(val, mult));
 	return 0;
 }
