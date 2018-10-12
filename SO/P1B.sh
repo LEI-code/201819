@@ -1,1 +1,0 @@
-find ./ -type d -size +$1

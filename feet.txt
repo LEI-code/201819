@@ -22,7 +22,7 @@ Java{
 Python{
 	You try to shoot yourself in the foot but you just keep hitting the whitespace between your toes.
 	-------------------------------------------------------------------------------------------------
-	Python: You try to import gun but it's a new feature in Python 3 and your workplace still uses Python 2.7 with no plans to migrate.
+	You try to import gun but it's a new feature in Python 3 and your workplace still uses Python 2.7 with no plans to migrate.
 }
 
 UNIX
