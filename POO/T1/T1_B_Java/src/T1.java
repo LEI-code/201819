@@ -29,6 +29,22 @@ class tr{
 		for(int i = 0; i < 3; i++)pts[i].readPt(sc);
 		return this;
 	}
+	public double[] GetDistances(){
+		double[] dists = new double[3];
+		dists[0] = pts[0].dist(pts[1]);	//AB
+		dists[1] = pts[1].dist(pts[2]);	//BC
+		dists[2] = pts[2].dist(pts[0]);	//CA
+		return dists;
+	}
+	public boolean isValid(double[] distances){
+		if(distances == null)distances = this.GetDistances(); 				//for single use
+		double ab = distances[0], bc = distances[1], ca = distances[2];		//aliasing. Should be optimized.
+		return (ab < bc + ca) && (bc < ab + ca) && (ca < ab + bc); 
+			//if the points are collinear one of these must fail 
+			//because the sum of the distance the 2 "inner" sides 
+			//will be ->equal<- to the that of the larger side
+			//same thing for if all sides are the same point
+	}
 
 	tr(){for(int i = 0; i < 3; i++)pts[i] = new p2();}
 	tr(java.util.Scanner sc){this(); readPts(sc);}
@@ -79,15 +95,16 @@ class TriangleFinder{
 	TriangleFinder() {
 		java.util.Scanner sc = new java.util.Scanner(System.in);
 		boolean CurrSuccess = false;
+
 		tr GoldenTriangle = new tr(sc);
+		double[] dists = GoldenTriangle.GetDistances();
+		if(!GoldenTriangle.isValid(dists)){System.out.println("Invalid Golden Triangle"); System.exit(0);}
+
 		tr HiddenTriangle = new tr();
+
 		int pointAmount   = 0;
 		p2[] planePoints  = new p2[pointAmount = sc.nextInt()];
 		for (int i = 0; i < pointAmount; i++)planePoints[i] = new p2(sc);
-		double[] dists = new double[3];
-		dists[0] = GoldenTriangle.pts[0].dist(GoldenTriangle.pts[1]);
-		dists[1] = GoldenTriangle.pts[1].dist(GoldenTriangle.pts[2]);
-		dists[2] = GoldenTriangle.pts[2].dist(GoldenTriangle.pts[0]);
 
 		CurrSuccess = false;
 		
