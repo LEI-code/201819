@@ -10,7 +10,8 @@
 //OFF_REGEX(SUBLIME):^(\s*)/\*DEBUG_\*/(.*)
 //OFF_SUBST(SUBLIME):$1/*DEBUG_ $2*/
 
-//--------------------------------------------regexes for sed (for my comment/uncomment script) 
+//--------------------------------------------regexes for sed (for my comment/uncomment script)
+//- - - - - - - - - - - - - - - - - - - - - - https://github.com/LEI-code/L201819/blob/master/POO/CompScript/jdbgcomment 
 //ON_REGEX(SED):^(\s*)\/\*DEBUG_(.*)\*\/
 //ON_SUBST(SED):\1\/*DEBUG_*\/\2
 //OFF_REGEX(SED):^(\s*)\/\*DEBUG_\*\/(.*)

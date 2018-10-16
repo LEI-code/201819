@@ -1,9 +1,0 @@
-#comment
-#comment2
-  /*DEBUG_*/ Boolean[] temp = new Boolean[tPirates.size()]; this.PrintArr(tPirates.toArray(temp)); String padding = ""; for (int i = 0; i < (currIndx); i++)padding += "  "; System.out.printf("%s^\n", padding);
-  
-//--------------------------------------------regexes for sed (for my comment/uncomment script)
-//ON_REGEX(SED):^(\s*)\/\*DEBUG_(.*)\*\/
-//ON_SUBST(SED):\1\/*DEBUG_*\/\2
-//OFF_REGEX(SED):^(\s*)\/\*DEBUG_\*\/(.*)
-//OFF_SUBST(SED):\1\/*DEBUG_\2*\/
