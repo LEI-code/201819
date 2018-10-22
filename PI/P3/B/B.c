@@ -1,13 +1,13 @@
 #include <stdio.h>
 
-//nr of goals                    1  2  3  4  5
-//nr of backflips                1  2  3  2  1
-//total of backflips             1  3  6  8  9
+//nr of goals                    1  2  3  4
+//nr of backflips                1  2  3  2
+//total of backflips             1  3  6  8
 
-int backflipsPerGoalSet[6] = {0, 1, 3, 6, 8, 9};
+int backflipsPerGoalSet[5] = {0, 1, 3, 6, 8};
 
 int calcBackflips(int goals){
-	return goals/5*9 + backflipsPerGoalSet[goals%5];
+	return goals/4*8 + backflipsPerGoalSet[goals%4];
 }
 
 int main(int argc, char const *argv[]){
