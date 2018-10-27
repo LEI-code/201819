@@ -1,0 +1,40 @@
+#include <string.h>
+#include <stdlib.h>
+#include "Matrix.h"
+
+template<class T>Row<T>::Row(Matrix<T>* m, unsigned index) : /*m(m), */w(m->w), r(&(m->matrix[(index-1)*m->w])) {}
+
+template<class T>
+T& Row<T>::operator()(unsigned x){
+	if(x < 1 || --x >= w)
+		throw typename Matrix<T>::MatrixOperationException(Matrix<T>::MatrixOperationException::ExceptionType::LINE_OUTOFBOUNDS, "Invalid line index!");
+	return r[x];
+}
+
+template<class T>
+Row<T>& Row<T>::operator+=(Row x){
+	for (int i = 0; i < w; ++i){
+		this->r[i] += x.r[i];
+	}
+	return *this;
+}
+
+template<class T>
+Row<T>& Row<T>::operator*=(T x){
+	if(x == (T)0)
+		throw typename Matrix<T>::MatrixOperationException(Matrix<T>::MatrixOperationException::ExceptionType::ROW_MUL_ZERO, "Attempting to multiply row by zero!");
+	for (int i = 0; i < w; ++i){
+		this->r[i] *= x;
+	}return *this;
+}
+
+template<class T>
+Row<T>& Row<T>::operator<<=(Row x){
+	unsigned rowSize = sizeof(T)*w;
+	T* val = (T*)malloc(rowSize);
+	memcpy(val, this->r, rowSize);
+	memcpy(this->r, x.r, rowSize);
+	memcpy(x.r, val, rowSize);
+	free(val);
+	return *this;
+}
