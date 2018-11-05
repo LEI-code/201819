@@ -7,15 +7,19 @@ template<class T> class Matrix;
 
 template<class T>
 class Row{
-	T* 		 r;
 	unsigned w;
+	T* 		 r;
+	bool isAllocated;
 public:
 	Row(Matrix<T>* m, unsigned index);
+	Row(const Row& oda);
+	~Row();
 
 	T& operator()(unsigned x);
-	Row<T>& operator+=(Row x);
-	Row<T>& operator*=(T x);
-	Row<T>& operator<<=(Row x);
+	Row<T>& operator+=(Row x);	//ADD ROW
+	Row<T>& operator*=(T x);	//MULT SCALAR
+	Row<T>  operator*(T x);		//MULT SCALAR INST
+	Row<T>& operator<<=(Row x);	//SWITCH
 };
 
 /////////////////////

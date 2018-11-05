@@ -49,62 +49,81 @@ int main(int argc, char const *argv[]){
 #include "Matrix/Matrix.h"
 #include <stdio.h>
 
-unsigned m1[2][3] = {
-	{2, 3, 4},
-	{1, 0, 0}
+#define mt double
+
+mt A[3][4] = {
+	{3, 1,  0, -2},
+	{1, 1, -1,  2},
+	{0, 1,  1,  0}
 };
-unsigned m2[3][2] = {
-	{0, 1000},
-	{1, 100},
-	{0, 10}
+mt B[3][4] = {
+	{ 1, 0,  4,  2},
+	{-1, 2, -1,  2},
+	{ 2, 2,  1, -1}
 };
+mt C[3][4] = {
+	{ 0,  0,  1, -2},
+	{-2, -2, -1,  1},
+	{ 2,  2,  1, -1}
+};
+
+#define a(y, x) ((mt(*)(void*, unsigned, unsigned))me)(me, x, y)
 
 int main(int argc, char const *argv[]){
 	try{
-		int(*lelambda)(Matrix<int>& m, unsigned j, unsigned i) = [](Matrix<int>& m, unsigned j, unsigned i) -> int {return 0;};
-
-		puts("\n\nA----------------");
-		Matrix<int> n1 = Matrix<int>( 6, 4, lelambda = [](Matrix<int>& m, unsigned j, unsigned i) -> int {
+		/*puts("\n\nA----------------");
+		Matrix<mt> n1 = Matrix<mt>( 6, 4, [](void* me, unsigned j, unsigned i) -> mt {
 			return i+j;
 		});
-		n1.print(0); n1.~Matrix<int>();
+		n1.print(0); //n1.~Matrix<mt>();
 
 		puts("\n\nB----------------");
-		n1 = Matrix<int>( 3, 5, lelambda = [](Matrix<int>& m, unsigned j, unsigned i) -> int {
-			return 2*i*i-3*j;
+		n1 = Matrix<mt>( 3, 5, [](void* me, unsigned j, unsigned i) -> mt {
+			return (2*(i*i)) - (3*j);
 		});
-		n1.print(0); n1.~Matrix<int>();
+		n1.print(0); //n1.~Matrix<mt>();
 
 		puts("\n\nC----------------");
-		n1 = Matrix<int>( 4, 3, lelambda = [](Matrix<int>& m, unsigned j, unsigned i) -> int {
+		n1 = Matrix<mt>( 4, 3, [](void* me, unsigned j, unsigned i) -> mt {
 			return i+j>3?1:i+j==3?2:3;
 		});
-		n1.print(0); n1.~Matrix<int>();
+		n1.print(0); //n1.~Matrix<mt>();
 
 		puts("\n\nD----------------");
-		n1 = Matrix<int>( 3, 3, lelambda = [](Matrix<int>& m, unsigned j, unsigned i) -> int {
+		n1 = Matrix<mt>( 3, 3, [](void* me, unsigned j, unsigned i) -> mt {
 			return i+j==4?3:!((i+j)%3)?-1:0;
 		});
-		n1.print(0); n1.~Matrix<int>();
+		n1.print(0); //n1.~Matrix<mt>();
 
 		puts("\n\nE----------------");
-		n1 = Matrix<int>( 4, 5, lelambda = [](Matrix<int>& m, unsigned j, unsigned i) -> int {
-			return i==1?j:2*lelambda(m, i-1,j);
+		n1 = Matrix<mt>( 4, 5, [](void* me, unsigned j, unsigned i) -> mt {
+			return i==1?j:2*a(i-1,j);
 		});
-		n1.print(0); n1.~Matrix<int>();
+		n1.print(0); //n1.~Matrix<mt>();
 
 		puts("\n\nF----------------");
-		n1 = Matrix<int>( 3, 4, lelambda = [](Matrix<int>& m, unsigned j, unsigned i) -> int {
-			return i==1?(((int)pow(-1, i+j+1))*(2*i - j)):-lelambda(m, i-1,j)+1;
+		n1 = Matrix<mt>( 3, 4, [](void* me, unsigned j, unsigned i) -> mt {
+			return i==1?(((mt)pow(-1, i+j+1))*(2*i - j)):-a(i-1,j)+1;
 		});
-		n1.print(0); n1.~Matrix<int>();
+		n1.print(0); //n1.~Matrix<mt>();
 
 		puts("\n\nG----------------");
-		n1 = Matrix<int>( 4, 3, lelambda = [](Matrix<int>& m, unsigned j, unsigned i) -> int {
-			return i==1?j:((int)pow(-1, i+j))*2*lelambda(m, i-1, j);
+		n1 = Matrix<mt>( 4, 3, [](void* me, unsigned j, unsigned i) -> mt {
+			return i==1?j:((mt)pow(-1, i+j))*2*a(i-1, j);
 		});
-		n1.print(0); n1.~Matrix<int>();		
-	}catch(Matrix<unsigned>::MatrixOperationException e){
+		n1.print(0); n1.~Matrix<mt>();*/
+
+		mt temp[4][4] = {
+			{1, 2, 3, 3},
+			{5, 10, 1, 2},
+			{3, 6, 2, 4},
+			{2, 4, 3, 2},
+		};
+		
+		Matrix<mt> matt = Matrix<mt>(4, 4, (mt*)temp);
+		matt(2) += matt(4)*(-5);
+		printf("%i\n", matt.isInvertible());
+	}catch(Matrix<mt>::MatrixOperationException e){
 		puts(e.message);
 	}
 	return 0;

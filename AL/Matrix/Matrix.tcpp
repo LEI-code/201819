@@ -2,69 +2,93 @@
 #include <string.h>
 #include <math.h>
 
-#define linear2Dindex(x, y, w) y*w + x 
+#include <stdio.h>
+
+#define linear2Dindex(x, y, w) y*w + x
+#define cnl(c) c - 'a' //character to number lowercase
+#define cnu(c) c - 'A' //character to number uppercase
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////CONSTRUCTORS AND DESTRUCTORS/////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<class T>
-Matrix<T>::Matrix(unsigned h, unsigned w, T* initVals) : 
+template<class T_>
+Matrix<T_>::Matrix(unsigned h, unsigned w, T_* initVals) : 
 	w(w), 
 	h(h), 
 	isAllocated(!initVals), 
-	matrix(initVals?initVals:(T*)malloc(sizeof(T)*w*h)){
+	matrix(initVals?initVals:(T_*)malloc(sizeof(T_)*w*h)){
 }
 
-template<class T>
-Matrix<T>::Matrix(unsigned h, unsigned w, T(*f)(Matrix<T>&, unsigned, unsigned)) : Matrix(h, w){
+template<class T_>
+Matrix<T_>::Matrix(unsigned h, unsigned w, T_(*f)(void*, unsigned, unsigned)) : Matrix(h, w){
 	for (unsigned y = 0; y < h; ++y){
 		for (unsigned x = 0; x < w; ++x){
-			this->matrix[y*w+x] = f(*this, x+1, y+1);
+			this->matrix[y*w+x] = f((void*)f, x+1, y+1);
 		}
 	}
 }
 
-template<class T>
-Matrix<T>::Matrix(const Matrix& og) : isAllocated(true), matrix((T*)malloc(sizeof(T)*og.h*og.w)), h(og.h), w(og.w){
-	memcpy(this->matrix, og.matrix, sizeof(T)*h*w);
+template<class T_>
+Matrix<T_>::Matrix(const Matrix& og) : isAllocated(true), matrix((T_*)malloc(sizeof(T_)*og.h*og.w)), h(og.h), w(og.w){
+	memcpy(this->matrix, og.matrix, sizeof(T_)*h*w);
 }
 
-template<class T>
-Matrix<T>::~Matrix(){
-	if(this->isAllocated)free(this->matrix);
+template<class T_>
+Matrix<T_>::~Matrix(){
+	if(this->isAllocated){
+		free(this->matrix);
+		this->matrix = 0;
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////UTILITY FUNCTIONS/////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<class T>
-void Matrix<T>::print(unsigned char dp){
+template<class T_>
+void Matrix<T_>::print(unsigned char dp){
+	bool hasNegatives = false;
 	unsigned s = h*w;
 	unsigned char biggr = 0, nrDigits;
 
 	for (unsigned i = 0; i < s; ++i){
-		nrDigits = log10(abs(matrix[i]))+1+((double)matrix[i] < 0);
+		if(matrix[i] < (T_)0)hasNegatives = true;
+		nrDigits = log10(abs(matrix[i]))+1;
 		if(biggr < nrDigits)biggr = nrDigits;
 	}biggr += dp + !!dp; //decimal places and comma
 
-	for (unsigned y = 0; y < h; ++y){
-		for (unsigned x = 0; x < w; ++x){
-			printf(" %-*.*lf"+!x, biggr, dp, (double)matrix[y*w+x]);
-		}puts("");
+	if(!hasNegatives){
+		for (unsigned y = 0; y < h; ++y){
+			for (unsigned x = 0; x < w; ++x){
+				printf(" %-*.*lf"+!x, biggr, dp, (double)matrix[y*w+x]);
+			}puts("");
+		}
+	}else{
+		for (unsigned y = 0; y < h; ++y){
+			for (unsigned x = 0; x < w; ++x){
+				bool isNegative = matrix[y*w+x] < (T_)0;
+				printf("  %-*.*lf"+!x+isNegative, biggr+isNegative, dp, (double)matrix[y*w+x]);
+			}puts("");
+		}
+
 	}
 }
 
-template <class T> 
-Matrix<T>* Matrix<T>::pullIdentity(Matrix<T>* initVals){
-	printf("pullIdentity not implemented\n");
-	return 0;
+template <class T_> 
+Matrix<T_>& Matrix<T_>::makeIdentity(){
+	if(!isSquare())
+		throw MatrixOperationException(MatrixOperationException::ExceptionType::ID_NONSQUARE, "Trying to make identity out of non-square matrix!");
+	for (int y = 0; y < this->h; ++y){
+		for (int x = 0; x < this->w; ++x){
+			this->matrix[y*this->h + x] = (x==y)?(T_)1:(T_)0;
+	}	}
+	return *this;
 }
 
 //https://en.wikipedia.org/wiki/Transpose
-template <class T> 
-Matrix<T>* Matrix<T>::pullTranspose(Matrix<T>* transpo){
+template <class T_> 
+Matrix<T_>* Matrix<T_>::pullTranspose(Matrix<T_>* transpo){
 	if(transpo->w != this->h || transpo->h != this->w)return 0;
 
 	for (unsigned y = 0; y < h; ++y){
@@ -74,66 +98,131 @@ Matrix<T>* Matrix<T>::pullTranspose(Matrix<T>* transpo){
 	return transpo;
 }
 
+template<class T_>
+Matrix<T_> Matrix<T_>::T(){
+	Matrix<T_> ret = Matrix<T_>(this->w, this->h);
+	return *this->pullTranspose(&ret);
+}
+
+template<class T_>
+T_ Matrix<T_>::det(){
+	if(!this->isSquare())
+		throw MatrixOperationException(MatrixOperationException::ExceptionType::DET_NONSQUARE, "Trying to get determinant of non-square matrix!");
+	
+	if(this->w == 1)
+		return this->matrix[0];
+	else if(this->w == 2){
+		return this->matrix[0]*this->matrix[3] - this->matrix[1]*this->matrix[2];
+	}else if(this->w == 3){
+		T_* tm = this->matrix;
+		return 
+			tm[cnl('a')] * (tm[cnl('e')] * tm[cnl('i')] - tm[cnl('f')] * tm[cnl('h')])	//    | a b c |
+			-																			//    | d e f |
+			tm[cnl('b')] * (tm[cnl('d')] * tm[cnl('i')] - tm[cnl('f')] * tm[cnl('g')])	//    | g h i |
+			+
+			tm[cnl('c')] * (tm[cnl('d')] * tm[cnl('h')] - tm[cnl('e')] * tm[cnl('g')])
+			;
+	}else{  //TODO: laplace
+														#define	OpOn(y_, x_) opOn.matrix[y_*side+x_]
+		Matrix<T_> opOn = Matrix<T_>(*this);			//create matrix so we can put it in triangle form
+		unsigned side = opOn.w;
+		for (unsigned x = 0; x < opOn.w-1; ++x){		//for every column (last one doesnt matter)
+			if(OpOn(x, x) == (T_)0){					//if the pivot is zero
+				bool foundNonZero = false;
+				for (int y = x+1; y < opOn.h; ++y){		//for every row after the pivot one
+					if(OpOn(y, x) == (T_)0)				//check if it's also zero on the pivot's column
+						continue;						//if it is go on,
+					else {								//if it's not
+						opOn(x+1)<<=opOn(y+1);			//switch the rows so the one with the whole number is the pivot
+						foundNonZero = true; 			//make sure we let the program know this column isn't done already
+						break;							//break
+					}
+				}
+				if(!foundNonZero)						//this column already has everything zeroed out, including pivot
+					return 0;							//if pivot is zero, determinant is going to be zero
+			}
+
+			for (unsigned y = x+1; y < opOn.h; ++y){	//for every row
+				if(OpOn(y, x) == (T_)0)continue;		//if the row of the pivot's column is already zero, onto the next
+				opOn(y+1) += opOn(x+1) * (-(			//otherwise, zero the row's pivot column cell out
+					OpOn(y,x)/OpOn(x,x)
+				));
+			}
+		}
+		T_ det = OpOn(0, 0);							//det = m(1, 1)
+		for (unsigned i=1;i<opOn.w;++i)det*=OpOn(i, i);	//multiply by each element in the diagonal
+		return det;										//return
+														#undef OpOn
+	}
+}
+
 ///////////////////////////////////////////////////PROPERTIES////////////////////////////////////////////////////
 
 //https://en.wikipedia.org/wiki/Square_matrix
-template <class T> 
-bool Matrix<T>::isSquare(){
+template <class T_> 
+bool Matrix<T_>::isSquare(){
 	return w == h;
 }
 
 //https://en.wikipedia.org/wiki/Upper_triangular_matrix
-template <class T> 
-bool Matrix<T>::isUpperTriangular(){
+template <class T_> 
+bool Matrix<T_>::isUpperTriangular(){
 	if(!isSquare())return false;
 	for (unsigned y = 0; y < h; ++y){
-		for (unsigned x = y + 1; x < w; ++x)if(this->matrix[y*w+x] != (T)0)return false;
+		for (unsigned x = y + 1; x < w; ++x)if(this->matrix[y*w+x] != (T_)0)return false;
 	}return true;
 }
 
 //https://en.wikipedia.org/wiki/Lower_triangular_matrix
-template <class T> 
-bool Matrix<T>::isLowerTriangular(){
+template <class T_> 
+bool Matrix<T_>::isLowerTriangular(){
 	if(!isSquare())return false;
 	for (unsigned y = 0; y < h; ++y){
-		for (unsigned x = 0; x < y; ++x)if(this->matrix[y*w+x] != (T)0)return false;
+		for (unsigned x = 0; x < y; ++x)if(this->matrix[y*w+x] != (T_)0)return false;
 	}return true;
 }
 
 //https://en.wikipedia.org/wiki/Diagonal_matrix
-template <class T> 
-bool Matrix<T>::isDiagonal(){
+template <class T_> 
+bool Matrix<T_>::isDiagonal(){
 	for (unsigned y = 0; y < h; ++y){
-		for (unsigned x = y + 1; x < w; ++x)if(this->matrix[y*w+x] != (T)0)return false;
-		for (unsigned x = 0; x < y && x < w; ++x)if(this->matrix[y*w+x] != (T)0)return false;
+		for (unsigned x = y + 1; x < w; ++x)if(this->matrix[y*w+x] != (T_)0)return false;
+		for (unsigned x = 0; x < y && x < w; ++x)if(this->matrix[y*w+x] != (T_)0)return false;
 	}return true;
 }
 
 
 //https://math.stackexchange.com/questions/1718945/scalar-matrix-matrices
-template <class T> //we're just gonna consider the zero matrix as being scalar
-bool Matrix<T>::isScalar(){
+template <class T_> //we're just gonna consider the zero matrix as being scalar
+bool Matrix<T_>::isScalar(){
 	if(isSquare() && isDiagonal()){
-		T first = matrix[0];
+		T_ first = matrix[0];
 		for (unsigned i = 0; i < w; ++i)if(matrix[i*w+i] != first)return false;
 		return true;
 	}else return false;
 }
 
 //https://en.wikipedia.org/wiki/Identity_matrix
-template <class T> 
-bool Matrix<T>::isIdentity(){
-	return (matrix[0] == (T)1) && isScalar();
+template <class T_> 
+bool Matrix<T_>::isIdentity(){
+	return (matrix[0] == (T_)1) && isScalar();
 }
 
-template <class T> 
-bool Matrix<T>::isSymmetric(){
+template <class T_> 
+bool Matrix<T_>::isSymmetric(){
 	if(this->w != this->h)return false;
 	for (unsigned y = 0; y < h; ++y){
 		for (unsigned x = y + 1; x < w; ++x)if(this->matrix[y*w+x] != this->matrix[x*w+y])return false;
 	}return true;
 }
 
+//https://en.wikipedia.org/wiki/Invertible_matrix
+template <class T_> 
+bool Matrix<T_>::isInvertible(T_ *det){
+	if(!this->isSquare())return false;
+	T_ detr = this->det(); if(det)*det = detr;
+	return detr != (T_)0;
+}
 
 
 
@@ -141,8 +230,19 @@ bool Matrix<T>::isSymmetric(){
 ///////////////////////////////////////////////OPERATOR OVERLOADS////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template <class T>
-Matrix<T>& Matrix<T>::operator+=(Matrix<T> oda){
+template <class T_>
+Matrix<T_>& Matrix<T_>::operator=(Matrix<T_> oda){
+	this->~Matrix<T_>();
+	this->isAllocated = true;
+	this->w = oda.w;
+	this->h = oda.h;
+	this->matrix = (T_*)malloc(w*h*sizeof(T_));
+	memcpy(this->matrix, oda.matrix, w*h*sizeof(T_));
+	return *this;
+}
+
+template <class T_>
+Matrix<T_>& Matrix<T_>::operator+=(Matrix<T_> oda){
 	if(oda.w != this->w || oda.h != this->h)
 		throw MatrixOperationException(MatrixOperationException::ExceptionType::SUM_SIZE_MISMATCH, "Attempting to sum matrices with different sizes!");
 
@@ -153,8 +253,8 @@ Matrix<T>& Matrix<T>::operator+=(Matrix<T> oda){
 	return *this;
 }
 
-template <class T>
-Matrix<T>& Matrix<T>::operator*=(T oda){
+template <class T_>
+Matrix<T_>& Matrix<T_>::operator*=(T_ oda){
 	unsigned s = this->w*this->h;
 	for (unsigned i = 0; i < s; ++i){
 		this->matrix[i] *= oda;
@@ -162,24 +262,24 @@ Matrix<T>& Matrix<T>::operator*=(T oda){
 	return *this;
 }
 
-template <class T>
-Matrix<T> Matrix<T>::operator+(Matrix<T> oda){
-	Matrix<T> sum = Matrix<T>(*this);
+template <class T_>
+Matrix<T_> Matrix<T_>::operator+(Matrix<T_> oda){
+	Matrix<T_> sum = Matrix<T_>(*this);
 	return sum += oda;
 }
 
 //https://en.wikipedia.org/wiki/Matrix_(mathematics)#Matrix_multiplication
-template <class T>
-Matrix<T> Matrix<T>::operator*(Matrix<T> oda){
+template <class T_>
+Matrix<T_> Matrix<T_>::operator*(Matrix<T_> oda){
 	if(this->w != oda.h)
 		throw MatrixOperationException(MatrixOperationException::ExceptionType::MUL_SIZE_MISMATCH, "Attempting to multiply matrices where the number of columns of the first isn't the same as the name of lines in the second!");
 
-	Matrix<T> mul = Matrix<T>(this->h, oda.w);
+	Matrix<T_> mul = Matrix<T_>(this->h, oda.w);
 
 	for (unsigned y = 0; y < mul.h; ++y){
 		for (unsigned x = 0; x < mul.w; ++x){
 			//---------------------------
-			mul.matrix[y*mul.w + x] = (T)0;
+			mul.matrix[y*mul.w + x] = (T_)0;
 			for (unsigned i = 0; i < this->w; ++i)
 				mul.matrix[y*mul.w + x] += this->matrix[y*this->w + i] * oda.matrix[i*oda.w + x];
 			//---------------------------
@@ -189,14 +289,14 @@ Matrix<T> Matrix<T>::operator*(Matrix<T> oda){
 	return mul;
 }
 
-template <class T>
-Matrix<T> Matrix<T>::operator*(T oda){
-	Matrix<T> sum = Matrix<T>(*this);
+template <class T_>
+Matrix<T_> Matrix<T_>::operator*(T_ oda){
+	Matrix<T_> sum = Matrix<T_>(*this);
 	return sum *= oda;
 }
 
-template <class T>
-T& Matrix<T>::operator()(unsigned y, unsigned x){
+template <class T_>
+T_& Matrix<T_>::operator()(unsigned y, unsigned x){
 	if(y < 1 || --y >= h)
 		throw MatrixOperationException(MatrixOperationException::ExceptionType::ROW_OUTOFBOUNDS, "Invalid row index!");
 	if(x < 1 || --x >= w)
@@ -205,15 +305,15 @@ T& Matrix<T>::operator()(unsigned y, unsigned x){
 }
 
 
-template <class T>
-Row<T> Matrix<T>::operator()(unsigned y){
+template <class T_>
+Row<T_> Matrix<T_>::operator()(unsigned y){
 	if(y < 1 || y > this->w)
 		throw MatrixOperationException(MatrixOperationException::ExceptionType::ROW_OUTOFBOUNDS, "Invalid row index!");	
-	return Row<T>(this, y);
+	return Row<T_>(this, y);
 }
 
-template <class T>
-bool Matrix<T>::operator==(Matrix<T>& oda){
+template <class T_>
+bool Matrix<T_>::operator==(Matrix<T_>& oda){
 	unsigned i = 0, s = w*h;
 	for (; i < s && this->matrix[s]==oda.matrix[s]; ++i);
 	return i == s-1;

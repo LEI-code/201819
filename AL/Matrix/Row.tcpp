@@ -1,8 +1,17 @@
 #include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include "Matrix.h"
 
-template<class T>Row<T>::Row(Matrix<T>* m, unsigned index) : /*m(m), */w(m->w), r(&(m->matrix[(index-1)*m->w])) {}
+#include <stdio.h>
+
+template<class T> Row<T>::Row(Matrix<T>* m, unsigned index) : w(m->w), r(&(m->matrix[(index-1)*m->w])), isAllocated(false) {}
+template<class T> Row<T>::Row(const Row& oda) : w(oda.w), r((T*)malloc(sizeof(T)*w)), isAllocated(true) {
+	memcpy(this->r, oda.r, sizeof(T)*w);
+}
+template<class T>Row<T>::~Row(){
+	if(isAllocated)free(r);
+}
 
 template<class T>
 T& Row<T>::operator()(unsigned x){
@@ -23,9 +32,15 @@ template<class T>
 Row<T>& Row<T>::operator*=(T x){
 	if(x == (T)0)
 		throw typename Matrix<T>::MatrixOperationException(Matrix<T>::MatrixOperationException::ExceptionType::ROW_MUL_ZERO, "Attempting to multiply row by zero!");
-	for (int i = 0; i < w; ++i){
+	for (unsigned i = 0; i < this->w; ++i){
 		this->r[i] *= x;
 	}return *this;
+}
+
+template<class T>
+Row<T> Row<T>::operator*(T x){
+	Row<T> neu = Row<T>(*this);
+	return neu*=x;
 }
 
 template<class T>
