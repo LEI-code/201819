@@ -7,11 +7,41 @@ public class P1{
 
 		Point[] externals = mechaQueen.externPoints();
 
-		for (int i = 0; i < externals.length; i++) {
-			System.out.print("(" + externals[i].x + ", " + externals[i].y + ") ");
+		if(externals.length == 3){
+			Triangle tri = new Triangle(externals);
+			System.out.println("triangle " + tri.perimeter());
+		}else if(externals.length == 4){
+			Quadrilateral quad = new Quadrilateral(externals);
+			String yeet = "";
+			switch (quad.getType()){
+				case CONCAVE:
+					yeet = "CONCAVE?! THIS WAS SUPPOSED TO BE IMPOSSIBRU";
+					break;
+				case CONVEX:
+					yeet = "quadrilateral";
+					break;
+				case PARALLELOGRAM:
+					yeet = "parallelogram";
+					break;
+				case RECTANGLE:
+					yeet = "rectangle";
+					break;
+				case SQUARE:
+					yeet = "square";
+					break;
+			}
+			System.out.println(yeet + " " + quad.perimeter());
+		}else{
+			System.out.println("niggersfuckingjewsgodisdeadhitlerdidnothingwrong");
 		}
 
-		System.out.println();
+
+
+
+
+		/*for (int i = 0; i < externals.length; i++) {
+			System.out.print("(" + externals[i].x + ", " + externals[i].y + ") ");
+		}System.out.println();*/
 
 		/*Point a = new Point(sc.nextDouble(), sc.nextDouble());
 		Point b = new Point(sc.nextDouble(), sc.nextDouble());
