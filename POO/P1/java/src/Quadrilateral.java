@@ -9,6 +9,9 @@ class Quadrilateral extends Polygon{
 			throw new java.lang.IllegalArgumentException("Quadrilateral Must Have 4 Points");
 	}
 
+	public boolean isValid(){
+	}
+
 	public double perimeter(){
 		return 
 			this.get('a').dist(this.get('b')) + 

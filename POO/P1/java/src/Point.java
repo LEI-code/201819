@@ -8,7 +8,7 @@ class Point{
 
 	public double x;
 	public double y;
-	
+
 	static double Distance(double x1, double y1, double x2, double y2){
 		return Math.sqrt((x1 - x2)*(x1 - x2)+(y1 - y2)*(y1 - y2));
 	}
@@ -17,5 +17,8 @@ class Point{
 	}
 	double dist(double x, double y){
 		return Distance(this.x, this.y, x, y);
+	}
+	boolean equals(Point p){
+		return this.x == p.x && this.y == p.y;
 	}
 }
