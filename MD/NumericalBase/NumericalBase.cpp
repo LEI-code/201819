@@ -25,10 +25,6 @@ NumberValue::NumberValue(const char* str, unsigned base) : buffer(0){
 	}	
 }
 
-NumberValue::NumberValue(unsigned long long bs10nr){}
-
-NumberValue::~NumberValue(){}
-
 void NumberValue::print(unsigned base){
 	unsigned digits = (unsigned)logbx(base, buffer) + 1;
 	char* str = (char*)malloc(digits+1);

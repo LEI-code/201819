@@ -1,5 +1,5 @@
- #!/bin/bash
-javac -cp ./src -d ./bin ./src/$1.java
+#!/bin/bash
+javac -cp ./src -d ./bin ./src/*.java
 if [ "$?" -eq "0" ]
 then
 	echo "<-----------compiled, running:------------>"
