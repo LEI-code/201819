@@ -5,3 +5,12 @@ struct NumberValue{
 
 	unsigned long long buffer;
 };
+
+
+struct NumberStringValue{
+	NumberStringValue(char* nr, unsigned b);
+	~NumberStringValue();
+
+	unsigned base;
+	char* buffer;
+}

@@ -35,3 +35,13 @@ void NumberValue::print(unsigned base){
 	printf("%s\n", str);
 	free(str);
 }
+
+
+NumberStringValue::NumberStringValue(char* nr, unsigned b) : buffer(strdup(nr)), base(b){
+	if(b < 2 || b > 64){puts("stupid kid 1");*(char*)0 = 0;}
+}
+
+NumberStringValue::~NumberStringValue(){
+	free(this->buffer);
+}
+

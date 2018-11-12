@@ -1,0 +1,23 @@
+a) 	A quantidade de processos -iniciados- pelo programa é 3.
+	Se quisermos contar com o processo pai, teremos 4 processos no total.
+	Visto que eu já expliquei o fork, faz sentido pois:
+		-no primeiro fork, o processo pai, cria um processo filho.
+		-ambos resumem execução no return desse fork
+		-temos agora 2 processos que vão executar o 2º fork
+		-criando assim 4 processos
+	Por isso, e mais uma vez, podemos concluir que o processo gerado por este programa, cria 3 sub-processos. 
+	Dois filhos e um neto.
+
+b)	Os resultados são simples, o pai vai fazer um fork, o que quer dizer que vai também passar a condição do if, visto que nele, o fork dá return de um valor não zero.
+	Temos depois um wait, que vai esperar que o correspetivo filho morra (acabe execução). Por isso agora vamos ao filho.
+	O filho atribui à variável A o valor 10. Imprime depois o seu valor e adereço e acaba execução.
+	O pai pode então resumir execução e fazer estes últimos dois passos.
+	----------
+	|        |
+	|        |
+	----------
+	Como podemos ver pelo output (e como esperado) no filho, a tem valor 10, e no pai, a tem valor 5.
+	Porém ambos têm o mesmo adereço. Isto deve-se ao facto de que o fork clona o processo pai quando é chamado.
+	Como já vimos, o fork vai ser chamado uma vez, e vai dar return 2 vezes, em processos binariamente idênticos, com a unica diferença sendo a register na qual tem o return (eax para x86, rax para x86_64 por exemplo).
+	Como o processo é idêntico, o seu address space está mapeado também de maneira igual, logo, as variáveis vão ter adereços virtuais iguais, apesar de terem localizações físicas diferentes. Isto é possível com paging e segmentation (estando paging presente em todas as arquiteturas de propósito geral).
+

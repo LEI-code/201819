@@ -1,0 +1,21 @@
+a)	Este exercício sofre de uma ambiguidade lexica, em "Depois de ver cada mensagem, para o processo ativo com a instrução Sleep.". É difícil identificar se para é a preposição para, ou para do verbo parar.
+	
+	É também confuso visto que a esse ponto do enunciado, supostamente ambos os processos estão ativos.
+	Vou porém imaginar que a última frase ("O pai espera a morte do processo filho.") está antes da anteriormente referida, em cujo caso já faz sentido, visto que o pai esperando a morte do filho poderia ser considerado "inativo".
+
+	///////
+	///A///
+	///////
+
+b)	Este exercicio é também um pouco confuso, visto que seria talvez lógico que fosse mencionado um neto?
+	
+	///////
+	///B///
+	///////	
+
+	Fiz também uma versão alternativa com apenas um print em cada, e fiz com que o filho esperasse pelo fim do pai, para demonstrar flow control.
+
+
+	///////
+	/B-ALT/
+	///////
